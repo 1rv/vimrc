@@ -8,6 +8,8 @@ call plug#end()
 
 colorscheme nord
 
+
+
 let g:UltiSnipsExpandTrigger = '<Tab>' " use tab to expand snippet
 let g:UltiSnipsJumpForwardTrigger = '<Tab>' " use tab to move fwd
 let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>' "use shift-tab to move bkwd
