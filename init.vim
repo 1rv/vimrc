@@ -1,26 +1,20 @@
 call plug#begin(stdpath('data') . '/plugged') 
-Plug 'SirVer/ultisnips'
 Plug 'lervag/vimtex'
 Plug 'arcticicestudio/nord-vim'
-"Plug 'jacoborus/tender.vim'
-"Plug 'mhartington/oceanic-next'
-"Plug 'sainnhe/everforest'
-"Plug 'shaunsingh/nord.nvim'
-"Plug 'frenzyexists/aquarium-vim', { 'branch': 'develop' }
 Plug 'vim-airline/vim-airline'
 "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-"Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'Pocco81/true-zen.nvim'
-"Plug 'tricktux/pomodoro.vim'
-"Plug 'dbinagi/nomodoro'
-"Plug 'MunifTanjim/nui.nvim'
-"Plug 'jackMort/pommodoro-clock.nvim'
-"Plug 'mkropat/vim-tt'
 Plug '1rv/vim-diary'
 Plug 'nvim-tree/nvim-web-devicons'
-"Plug 'akinsho/bufferline.nvim'
+Plug 'akinsho/bufferline.nvim'
 Plug 'nvim-tree/nvim-tree.lua'
 Plug 'folke/which-key.nvim'
+Plug 'L3MON4D3/LuaSnip', {'tag': 'v2.*', 'do': 'make install_jsregexp'}
+Plug 'tpope/vim-repeat'
+Plug 'ggandor/leap.nvim'
+
+Plug 'tckmn/hotdog.vim'
+
 call plug#end()
 
 let mapleader = " "
@@ -64,19 +58,16 @@ filetype plugin on
 set termguicolors
 set t_Co=256
 
+"plugin stuff"
+
+lua << EOF
+require("bufferline").setup{}
+EOF
+
 let g:airline_section_x = '%{&filetype}'
 
 syntax enable
 colorscheme nord
-
-
-let g:UltiSnipsExpandTrigger = '<Tab>' " use tab to expand snippet
-let g:UltiSnipsJumpForwardTrigger = '<Tab>' " use tab to move fwd
-let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>' "use shift-tab to move bkwd
-
-let g:UltiSnipsSnippetDirectories=['C:\Users\dcche\.config\nvim\UltiSnips']
-
-filetype plugin indent on
 
 
 "tab stuff
@@ -84,6 +75,35 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
+
+"LUAsnip========================================
+"
+lua << EOF
+require("luasnip").config.set_config({ -- Setting LuaSnip config
+
+  -- Enable autotriggered snippets
+  enable_autosnippets = true,
+
+  -- Use Tab (or some other key if you prefer) to trigger visual selection
+  store_selection_keys = "<Tab>",
+})
+require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})
+EOF
+
+
+imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
+smap <silent><expr> <Tab> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<Tab>'
+
+imap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+
+imap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-f>'
+smap <silent><expr> <C-f> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-f>'
+
+
+filetype plugin indent on
+
+
 
 "line numbering
 set number relativenumber
@@ -111,9 +131,10 @@ nnoremap k gk
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
-"delete surrounding (), [], {}, $$ etc.
-"nnoremap d <S-5>
 
 let g:tex_flavor = 'latex'
 
 let g:diary_use_defaults = 1
+
+autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
